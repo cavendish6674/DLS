@@ -191,13 +191,13 @@ root.geometry("500x550")
 
 tabview = customtkinter.CTkTabview(master=root)
 
-tabview.add("Atack")
 tabview.add("Local Targets")
 tabview.add("Analyse Target")
+tabview.add("Atack")
 
 ##atk Tab
 frameAtk = customtkinter.CTkFrame(master=tabview.tab("Atack"))
-label = customtkinter.CTkLabel(master=frameAtk, text="Death-Star Laser", font=("Roboto", 24))
+label = customtkinter.CTkLabel(master=frameAtk, text="Rocket Louncher", font=("Roboto", 24))
 entryIp = customtkinter.CTkEntry(master=frameAtk, placeholder_text="Target Ip")
 entryPort = customtkinter.CTkEntry(master=frameAtk, placeholder_text="Target Port")
 startButton = customtkinter.CTkButton(master=frameAtk, text="Start Atack", command=toggleState)
