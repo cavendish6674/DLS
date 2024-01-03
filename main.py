@@ -2,7 +2,6 @@ import socket
 import random
 import threading
 import customtkinter
-import csv
 
 from PIL import Image
 from ping3 import ping
@@ -182,18 +181,10 @@ root.title("DLS")
 root.iconbitmap('image.ico')
 root.geometry("500x550")
 
-
-#background_image_path = 'image.ico'
-#background_image = customtkinter.CTkImage(light_image=Image.open(background_image_path),
-#                                  dark_image=Image.open(background_image_path),
-#                                  size=(500, 550))
-
-#bgLabel = customtkinter.CTkLabel(root, image=background_image, text="")
-
 tabview = customtkinter.CTkTabview(master=root)
 
 tabview.add("Local Targets")
-tabview.add("Analyse Target")
+tabview.add("Target Analyser")
 tabview.add("Atack")
 
 ##atk Tab
@@ -212,7 +203,7 @@ SearchProgress.set(0)
 findTargetsButton = customtkinter.CTkButton(master=frameTarget, text="Start Search", command=togleSearch)
 
 #Analyse Tab
-frameAnalyse = customtkinter.CTkFrame(master=tabview.tab("Analyse Target"))
+frameAnalyse = customtkinter.CTkFrame(master=tabview.tab("Target Analyser"))
 labelAnalyse = customtkinter.CTkLabel(master=frameAnalyse, text="Target Analyser", font=("Roboto", 24))
 textBoxAnalyse = customtkinter.CTkTextbox(master=frameAnalyse, height=200, width = 350)
 entryAnalyseIp = customtkinter.CTkEntry(master=frameAnalyse, placeholder_text="Target IP")
