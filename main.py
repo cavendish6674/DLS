@@ -2,6 +2,7 @@ import socket
 import random
 import threading
 import customtkinter
+import csv
 
 from PIL import Image
 from ping3 import ping
