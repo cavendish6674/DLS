@@ -176,6 +176,7 @@ customtkinter.set_default_color_theme("green")
 root = customtkinter.CTk()
 root.protocol("WM_DELETE_WINDOW", cleanUp)
 root.title("DLS")
+root.iconbitmap('image.ico')
 root.geometry("500x550")
 
 tabview = customtkinter.CTkTabview(master=root)
