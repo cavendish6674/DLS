@@ -66,7 +66,7 @@ def isIPValid(ip):
      if len(ipArray) != 4:
           return False
      for oktet in ipArray:
-          if int(oktet) > 255 or int(oktet) < 1:
+          if int(oktet) > 255 or int(oktet) < 0:
                return False
      
      return True
