@@ -2,12 +2,54 @@ import socket
 import random
 import threading
 import customtkinter
-import re
 
 from ping3 import ping
-from colorama import Fore, Back, Style
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+# Port Finder Tab
+
+def writePortsInBox():
+     global isAnalysing, AnalyseProgress, entryAnalyseIp, textBoxAnalyse, buttonAnalyse
+     
+     buttonAnalyse.configure(text="Stop Analysing")
+
+     line = 0
+     for port in range(1, 49152):
+          if not isAnalysing:
+               break
+          
+          sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+          sock.settimeout(0.001)
+          AnalyseProgress.set(port/49152)
+          print("scan Port " + str(port))
+          try:
+               sock.connect((entryAnalyseIp.get(), port))
+               textBoxAnalyse.insert("0."+str(line), str(port)+"\n")
+          except:
+               pass
+     
+     buttonAnalyse.configure(text="Start analysing")
+     AnalyseProgress.set(0)
+
+def startAnalysing():
+     global analyseThred, isAnalysing
+     analyseThred = threading.Thread(target=writePortsInBox)
+     isAnalysing = True
+     analyseThred.start()
+
+def stopAnalysing():
+     global analyseThred, isAnalysing
+     isAnalysing = False
+
+def toggleAnalyse():
+     global isAnalysing
+     if isAnalysing:
+          stopAnalysing()
+     else:
+          startAnalysing()
+
+#Search Targets Tab
 
 def writeTargetsInTextBox():
      netAddr = "192.168.0." #potentiell variabel
@@ -34,11 +76,10 @@ def writeTargetsInTextBox():
                line = line + 1
 
      resetLayout()
-     print("ende")
 
 def resetLayout():
      global findTargetsButton,SearchProgress, isSearchAktive
-     findTargetsButton.configure(text="Find Targets")
+     findTargetsButton.configure(text="Start Search")
      SearchProgress.set(0)
      isSearchAktive = False
 
@@ -60,6 +101,8 @@ def togleSearch():
           endSearch()
      else:
           startSearch()
+
+# ATK Tab
 
 def isIPValid(ip):
      ipArray = ip.split(".")
@@ -112,6 +155,7 @@ def toggleState():
           startAtk()
 
 def cleanUp():
+     stopAnalysing()
      endSearch()
      stopAtk()
      root.destroy()
@@ -120,8 +164,10 @@ isActive = False
 
 atkThread = ""
 searchThread = ""
+analyseThred = ""
 isSearchAktive = False
 terminateSearch = False
+isAnalysing = False
 
 #GUI
 customtkinter.set_appearance_mode("dark")
@@ -130,12 +176,13 @@ customtkinter.set_default_color_theme("green")
 root = customtkinter.CTk()
 root.protocol("WM_DELETE_WINDOW", cleanUp)
 root.title("DLS")
-root.geometry("500x400")
+root.geometry("500x550")
 
 tabview = customtkinter.CTkTabview(master=root)
 
 tabview.add("Atack")
 tabview.add("Local Targets")
+tabview.add("Analyse Target")
 
 ##atk Tab
 frameAtk = customtkinter.CTkFrame(master=tabview.tab("Atack"))
@@ -146,14 +193,23 @@ startButton = customtkinter.CTkButton(master=frameAtk, text="Start Atack", comma
 
 #Targets Tab
 frameTarget = customtkinter.CTkFrame(master=tabview.tab("Local Targets"))
+labelTargets = customtkinter.CTkLabel(master=frameTarget, text="Target Radar", font=("Roboto", 24))
 textBoxTargets = customtkinter.CTkTextbox(master=frameTarget, height=200, width = 350)
 SearchProgress = customtkinter.CTkProgressBar(frameTarget, orientation="horizontal")
 SearchProgress.set(0)
-findTargetsButton = customtkinter.CTkButton(master=frameTarget, text="toggle search", command=togleSearch)
+findTargetsButton = customtkinter.CTkButton(master=frameTarget, text="Start Search", command=togleSearch)
+
+#Analyse Tab
+frameAnalyse = customtkinter.CTkFrame(master=tabview.tab("Analyse Target"))
+labelAnalyse = customtkinter.CTkLabel(master=frameAnalyse, text="Target Analyser", font=("Roboto", 24))
+textBoxAnalyse = customtkinter.CTkTextbox(master=frameAnalyse, height=200, width = 350)
+entryAnalyseIp = customtkinter.CTkEntry(master=frameAnalyse, placeholder_text="Target IP")
+AnalyseProgress = customtkinter.CTkProgressBar(frameAnalyse, orientation="horizontal")
+buttonAnalyse = customtkinter.CTkButton(master=frameAnalyse, text="Find Ports", command= toggleAnalyse)
+AnalyseProgress.set(0)
 
 #atk Tab
 tabview.pack()
-#bgLabel.place(y = 0, x = 0)
 frameAtk.pack(pady = 20, padx = 60)
 label.pack(pady = 20, padx = 60)
 entryIp.pack(pady = 20, padx = 60)
@@ -162,8 +218,17 @@ startButton.pack(pady = 20, padx = 60)
 
 #Local Targets Tab
 frameTarget.pack()
+labelTargets.pack(pady= 20, padx = 20)
 textBoxTargets.pack(pady= 20, padx = 20)
 SearchProgress.pack(pady = 20, padx = 60)
 findTargetsButton.pack(pady = 20, padx = 60)
+
+#Analyse Tab
+frameAnalyse.pack()
+labelAnalyse.pack(pady= 20, padx = 20)
+textBoxAnalyse.pack(pady= 20, padx = 20)
+AnalyseProgress.pack(pady= 20, padx = 20)
+buttonAnalyse.pack(pady= 20, padx = 20)
+entryAnalyseIp.pack(pady= 20, padx = 20)
 
 root.mainloop()
