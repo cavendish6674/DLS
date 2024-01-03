@@ -3,6 +3,7 @@ import random
 import threading
 import customtkinter
 
+from PIL import Image
 from ping3 import ping
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -13,27 +14,28 @@ def writePortsInBox():
      global isAnalysing, AnalyseProgress, entryAnalyseIp, textBoxAnalyse, buttonAnalyse
      
      buttonAnalyse.configure(text="Stop Analysing")
-
+     textBoxAnalyse.delete("0.0", "end")
      line = 0
-     for port in range(1, 49152):
+     for port in range(1, 1023):
           if not isAnalysing:
                break
           
           sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
           sock.settimeout(0.001)
-          AnalyseProgress.set(port/49152)
-          print("scan Port " + str(port))
+          AnalyseProgress.set(port/1023)
           try:
                sock.connect((entryAnalyseIp.get(), port))
                textBoxAnalyse.insert("0."+str(line), str(port)+"\n")
           except:
                pass
      
-     buttonAnalyse.configure(text="Start analysing")
+     buttonAnalyse.configure(text="Find Ports")
      AnalyseProgress.set(0)
 
 def startAnalysing():
-     global analyseThred, isAnalysing
+     global analyseThred, isAnalysing, entryAnalyseIp
+     if not isIPValid(entryAnalyseIp.get()):
+          return 0
      analyseThred = threading.Thread(target=writePortsInBox)
      isAnalysing = True
      analyseThred.start()
@@ -179,6 +181,14 @@ root.title("DLS")
 root.iconbitmap('image.ico')
 root.geometry("500x550")
 
+
+#background_image_path = 'image.ico'
+#background_image = customtkinter.CTkImage(light_image=Image.open(background_image_path),
+#                                  dark_image=Image.open(background_image_path),
+#                                  size=(500, 550))
+
+#bgLabel = customtkinter.CTkLabel(root, image=background_image, text="")
+
 tabview = customtkinter.CTkTabview(master=root)
 
 tabview.add("Atack")
@@ -209,6 +219,8 @@ AnalyseProgress = customtkinter.CTkProgressBar(frameAnalyse, orientation="horizo
 buttonAnalyse = customtkinter.CTkButton(master=frameAnalyse, text="Find Ports", command= toggleAnalyse)
 AnalyseProgress.set(0)
 
+
+
 #atk Tab
 tabview.pack()
 frameAtk.pack(pady = 20, padx = 60)
@@ -231,5 +243,7 @@ textBoxAnalyse.pack(pady= 20, padx = 20)
 AnalyseProgress.pack(pady= 20, padx = 20)
 buttonAnalyse.pack(pady= 20, padx = 20)
 entryAnalyseIp.pack(pady= 20, padx = 20)
+
+#bgLabel.pack()
 
 root.mainloop()
