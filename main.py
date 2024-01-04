@@ -128,7 +128,6 @@ def atk():
      i = 0
      while isActive:
           sock.sendto(bytes,(ip, port))
-          print("send package " + str(i))
           i = i + 1
 
 def startAtk():
