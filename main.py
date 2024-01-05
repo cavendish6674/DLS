@@ -16,13 +16,13 @@ def writePortsInBox():
      buttonAnalyse.configure(text="Stop Analysing")
      textBoxAnalyse.delete("0.0", "end")
      line = 0
-     for port in range(1, 1023):
+     for port in range(1, 49151):
           if not isAnalysing:
                break
           
           sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
           sock.settimeout(0.001)
-          AnalyseProgress.set(port/1023)
+          AnalyseProgress.set(port/49151)
           try:
                sock.connect((entryAnalyseIp.get(), port))
                textBoxAnalyse.insert("0."+str(line), str(port)+"\n")
@@ -66,7 +66,7 @@ def writeTargetsInTextBox():
 
           SearchProgress.set(i/254)
           ip = netAddr + str(i)
-          print("scanning: " + str(ip))
+          #print("scanning: " + str(ip))
           isthere = ping(ip, timeout=0.2)
           if isthere:
                try:
