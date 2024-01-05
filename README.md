@@ -1,5 +1,5 @@
 # DLS
-The Thermonuclear Hypersonic Orbital Railgun (THOR) is a simple tool for carrying out DOS attacks, which is also suitable for beginners thanks to its graphical user interface
+Thermonuclear Hypersonic Orbital Railgun (THOR) is a simple tool for carrying out DOS attacks, which is also suitable for beginners thanks to its graphical user interface
 
 Installation:
 1. Install Python from "https://www.python.org/"
