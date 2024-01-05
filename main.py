@@ -176,7 +176,7 @@ customtkinter.set_default_color_theme("green")
 
 root = customtkinter.CTk()
 root.protocol("WM_DELETE_WINDOW", cleanUp)
-root.title("DLS")
+root.title("THOR")
 root.iconbitmap('image.ico')
 root.geometry("500x550")
 
@@ -184,11 +184,11 @@ tabview = customtkinter.CTkTabview(master=root)
 
 tabview.add("Local Targets")
 tabview.add("Target Analyser")
-tabview.add("Atack")
+tabview.add("Attack")
 
 ##atk Tab
-frameAtk = customtkinter.CTkFrame(master=tabview.tab("Atack"))
-label = customtkinter.CTkLabel(master=frameAtk, text="Rocket Louncher", font=("Roboto", 24))
+frameAtk = customtkinter.CTkFrame(master=tabview.tab("Attack"))
+label = customtkinter.CTkLabel(master=frameAtk, text="Attack", font=("Roboto", 24))
 entryIp = customtkinter.CTkEntry(master=frameAtk, placeholder_text="Target Ip")
 entryPort = customtkinter.CTkEntry(master=frameAtk, placeholder_text="Target Port")
 startButton = customtkinter.CTkButton(master=frameAtk, text="Start Atack", command=toggleState)
